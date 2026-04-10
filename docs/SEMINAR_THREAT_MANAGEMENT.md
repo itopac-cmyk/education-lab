@@ -1,28 +1,40 @@
-# Seminar: Advanced Threat Management & Ethical Hacking (2026)
+# Seminar Guide: 5 Web-Based Zero-Day Scenarios (2026)
 
-This guide provides a roadmap for demonstrating complex, modern attack chains and their detection.
+This seminar focuses on the **visual and practical** demonstration of modern web vulnerabilities. All scenarios are reachable via the **Vulnerability Education Portal (Port 9000)**.
 
-## Module 1: The Modern Supply Chain Attack (XZ Utils Style)
-**Concept:** Attackers no longer target the front door; they target the tools you trust.
-*   **The Scenario:** A popular Go crypto library (\`vulnerable_apps/supply_chain_lib/backdoor.go\`) is compromised. It exfiltrates secrets when used.
-*   **The Demo:** Show how the backdoor is hidden in a benign function. Explain why traditional SCA (Software Composition Analysis) often misses logic-based backdoors.
-*   **Threat Management:** Discuss the move towards **Software Bill of Materials (SBOM)** and binary attestation in 2026.
+## The Entry Point
+1. Run \`docker-compose up -d\` in the \`lab_infra\` folder.
+2. Open your browser at **http://localhost:9000**.
+3. You now see the catalog of all 5 scenarios.
 
-## Module 2: Identity is the Perimeter (OAuth & Token Theft)
-**Concept:** In the cloud, IP addresses are irrelevant. Identity tokens are everything.
-*   **The Attack:** An attacker uses a small directory traversal flaw in the \`web_app_cloud\` to read \`/app/token.txt\`. 
-*   **The Impact:** With this token, the attacker can authenticate to the \`id_provider\` as an admin.
-*   **Ethical Hacking:** Demonstrate the token theft using \`curl\`.
-*   **Threat Management:** Discuss **Zero Trust Architecture (ZTA)** and why tokens should be short-lived and hardware-bound.
+---
 
-## Module 3: Live Threat Visualization (The SOC Dashboard)
-**Concept:** Detection is only useful if it's actionable.
-*   **The Setup:** Open the SOC Dashboard at \`http://localhost:8080\`.
-*   **The Demo:** Run an exploit (e.g., Scenario 1: SSTI). Show the eBPF alert appearing in real-time.
-*   **Threat Management:** Discuss **Alert Fatigue** and how automated triage (using your LAT-OT project!) can help analysts focus on critical threats.
+## Scenario 1: Cloud-Native RCE (SSTI)
+*   **The Look:** A simple "Welcome" page.
+*   **The Simulation:** Add \`{{7*7}}\` to the URL. If it shows 49, it's vulnerable.
+*   **The Exploit:** Inject a Python one-liner to read \`/etc/passwd\`.
 
-## Module 4: Future Zero-Days (Memory Safety & Side-Channels)
-**Concept:** Why do we still have Zero-Days in 2026?
-1.  **Legacy Codebases:** Millions of lines of C/C++ in core infrastructure (Kernel, OpenSSL).
-2.  **Memory Safety:** Discuss the transition to **Rust** and why it eliminates 70% of classic vulnerabilities.
-3.  **Hardware-Assisted Side-Channels:** Briefing on new Spectre/Meltdown variants targeting modern AI chips.
+## Scenario 2: Gateway SSRF (Ivanti/ProxyNotShell Style)
+*   **The Look:** A "URL Proxy" tool.
+*   **The Simulation:** Attempt to fetch \`http://localhost\`. It will be blocked.
+*   **The Exploit:** Bypass the block by fetching \`http://internal_admin_api\` to steal the secret admin token.
+
+## Scenario 3: AI Agent Prompt Injection
+*   **The Look:** A chat interface for an AI Support Agent.
+*   **The Simulation:** Ask it to "ping google.com".
+*   **The Exploit:** Inject a shell command like \`ping localhost; id\` to trick the AI into executing code.
+
+## Scenario 4: Identity & Token Theft
+*   **The Look:** A "Login Debug" page.
+*   **The Simulation:** View the page to see the leaked JWT token.
+*   **The Exploit:** Use the stolen token to impersonate an admin against the ID-Provider service.
+
+## Scenario 5: Insecure Deserialization
+*   **The Look:** A POST endpoint for processing data.
+*   **The Simulation:** Send a base64 string.
+*   **The Exploit:** Send a base64-encoded Python \`pickle\` object that spawns a reverse shell or writes a file.
+
+---
+
+## Live Monitoring
+Open the **SOC Dashboard (Port 8080)** in a second window to see the eBPF/Sigma alerts trigger as students perform these actions!
