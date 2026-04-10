@@ -1,0 +1,31 @@
+title: Suspicious Child Process from Web App (SSTI/RCE)
+id: abcdef-1234-5678-abcd-1234567890ab
+status: experimental
+description: Detects when a web application (like Python/Flask or Node.js) spawns a shell or suspicious binary, which is highly indicative of an RCE exploit (e.g., via SSTI).
+author: Isa Topac (Education Lab)
+date: 2026-04-10
+tags:
+    - attack.execution
+    - attack.t1059.004
+logsource:
+    category: process_creation
+    product: windows
+    service: sysmon # Note: Adaptable for Linux auditd/Sysmon for Linux
+detection:
+    selection:
+        ParentImage|endswith:
+            - '\python.exe'
+            - '\python3'
+            - '\node.exe'
+            - '\java.exe'
+        Image|endswith:
+            - '\cmd.exe'
+            - '\sh'
+            - '\bash'
+            - '\powershell.exe'
+            - '\curl'
+            - '\wget'
+    condition: selection
+falsepositives:
+    - Legitimate administrative scripts triggered via web interface (rare but possible).
+level: high

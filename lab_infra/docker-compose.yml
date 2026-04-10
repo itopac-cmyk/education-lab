@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+  target_app:
+    build: ./target_app
+    ports:
+      - "5000:5000"
+    networks:
+      - lab_net
+    restart: unless-stopped
+
+  attacker_node:
+    image: kalilinux/kali-rolling
+    command: /bin/sh -c "apt-get update && apt-get install -y curl nmap python3 jq && tail -f /dev/null"
+    networks:
+      - lab_net
+
+networks:
+  lab_net:
+    driver: bridge
