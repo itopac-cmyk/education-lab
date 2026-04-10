@@ -1,13 +1,38 @@
 version: '3.8'
 
 services:
+  # Cloud Identity / OAuth Simulation (Identity Triage)
+  id_provider:
+    image: python:3.10-alpine
+    command: python -c "from http.server import HTTPServer, BaseHTTPRequestHandler; import os; class S(BaseHTTPRequestHandler): def do_GET(self): self.send_response(200); self.end_headers(); self.wfile.write(b'{\"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzY29wZSI6WyJhZG1pbiIsImNsb3VkLXdyaXRlIl19.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c\", \"scope\": \"admin:cloud\"}'); HTTPServer(('', 80), S).serve_forever()"
+    networks:
+      - lab_net
+
+  # Web App with ID-Token theft vulnerability
+  web_app_cloud:
+    image: python:3.10-alpine
+    command: python -c "from http.server import HTTPServer, BaseHTTPRequestHandler; import os; class S(BaseHTTPRequestHandler): def do_GET(self): self.send_response(200); self.end_headers(); self.wfile.write(b'Logged In. Debug Info: Cloud Token is ' + open('/app/token.txt', 'r').read().encode()); HTTPServer(('', 80), S).serve_forever()"
+    volumes:
+      - ./auth_service/token.txt:/app/token.txt:ro
+    networks:
+      - lab_net
+
+  # Live SOC Dashboard for the seminar
+  soc_dashboard:
+    build: ./soc_dashboard
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - lab_net
+
   target_app:
     build: ./target_app
     ports:
       - "5000:5000"
     networks:
       - lab_net
-    restart: unless-stopped
 
   ssrf_gateway:
     build: ./ssrf_app
@@ -15,7 +40,6 @@ services:
       - "5001:5001"
     networks:
       - lab_net
-    restart: unless-stopped
 
   llm_agent:
     build: ./llm_agent_sim
@@ -23,17 +47,10 @@ services:
       - "5002:5002"
     networks:
       - lab_net
-    restart: unless-stopped
-
-  internal_admin_api:
-    image: python:3.10-alpine
-    command: python -c "from http.server import HTTPServer, BaseHTTPRequestHandler; import os; class S(BaseHTTPRequestHandler): def do_GET(self): self.send_response(200); self.end_headers(); self.wfile.write(b'SECRET_ADMIN_TOKEN=739182374912; ' + os.popen(self.headers.get('Cmd', 'echo none')).read().encode()); HTTPServer(('', 80), S).serve_forever()"
-    networks:
-      - lab_net
 
   attacker_node:
     image: kalilinux/kali-rolling
-    command: /bin/sh -c "apt-get update && apt-get install -y curl nmap python3 jq netcat-traditional && tail -f /dev/null"
+    command: /bin/sh -c "apt-get update && apt-get install -y curl nmap python3 jq netcat-traditional gobuster && tail -f /dev/null"
     networks:
       - lab_net
 

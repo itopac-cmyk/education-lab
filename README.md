@@ -1,37 +1,30 @@
-# Zero-Day-Lab: Modern Adversary Emulation & Detection Engineering (2026 Edition)
+# Zero-Day-Lab: Professional Cyber Security Education (Seminar Edition)
 
 [![Educational Use](https://img.shields.io/badge/Purpose-Education-green)](SECURITY.md)
-[![Tech Stack](https://img.shields.io/badge/Tech-Docker%20%7C%20Go%20%7C%20eBPF%20%7C%20Python-blue)]()
+[![Status](https://img.shields.io/badge/Status-Seminar%20Ready-blue)](docs/SEMINAR_THREAT_MANAGEMENT.md)
 
-## 🎯 Project Overview
-This lab is a comprehensive framework for studying the mechanics of modern Zero-Day vulnerabilities and the latest detection engineering techniques. 
+## 🎯 The Seminar-Ready Lab
+This lab is a comprehensive framework for **Threat Management** and **Ethical Hacking** seminars. It provides a containerized microservice environment to demonstrate the mechanics of the most devastating attacks from 2020-2026.
 
-Instead of focusing purely on "how to attack," we focus on **"how to detect and mitigate."**
+### Advanced Seminar Modules:
+1.  **[Supply Chain Attacks:](vulnerable_apps/supply_chain_lib/)** XZ Utils / Log4j style backdoor simulation.
+2.  **[Identity & OAuth Exploitation:](lab_infra/auth_service/)** Bypassing perimeters via Token Theft.
+3.  **[Agentic AI Prompt Injection:](docs/scenarios/SCENARIO_3_LLM_AGENT_EXPLOIT.md)** Exploiting LLMs with system access.
+4.  **[Cloud-Native RCE & SSRF:](docs/scenarios/SCENARIO_2_SSRF_TO_RCE.md)** Gateway exploitation and pivoting.
 
-### Core Learning Objectives:
-1.  **Vulnerability Research:** Understand modern flaws (SSTI, SSRF, AI Prompt Injection).
-2.  **Adversary Emulation:** Simulating modern malware behaviors (Sleep Obfuscation) using Go.
-3.  **Detection Engineering:** Writing SIEM detections (Sigma) and Kernel-level monitoring (eBPF/BCC).
+---
+
+## 🛡️ Live Threat Management Dashboard
+The lab includes a **real-time SOC Dashboard** (Port 8080) that visualizes alerts from our **eBPF Kernel Monitor** and **Sigma detection rules**. Students can see their hacker actions being detected in real-time.
 
 ---
 
 ## 🏗️ Lab Infrastructure
-The lab uses Docker Compose to provide an instant, safe, and realistic enterprise environment.
+- **`/lab_infra`:** Docker-compose setup for the entire range.
+- **`/vulnerable_apps`:** Source code for flawed and backdoored services.
+- **`/detection`:** Kernel-level (eBPF) and SIEM-level (Sigma/YARA) detection logic.
+- **`/analysis`:** Guides for Dynamic Analysis (GDB) and Forensics.
 
-### Live Scenarios (Demos):
-We have built dedicated, containerized microservices to simulate the exact mechanics of the most devastating recent attacks, plus a look into the future:
-
-1.  **[Scenario 1: Cloud-Native RCE (SSTI/Deserialization)](docs/SCENARIO_1_SSTI_TO_RCE.md)**
-2.  **[Scenario 2: Gateway SSRF to Internal RCE (Simulating Ivanti/ProxyNotShell mechanics)](docs/scenarios/SCENARIO_2_SSRF_TO_RCE.md)**
-3.  **[Scenario 3: Future Zero-Days - AI Agent Prompt Injection to RCE](docs/scenarios/SCENARIO_3_LLM_AGENT_EXPLOIT.md)**
-
----
-
-## 🚀 Quick Start
-1. Read the [Security & Ethics Policy](SECURITY.md).
-2. Start the lab: `cd lab_infra && docker-compose up -d`
-3. Enter the attacker node: `docker-compose exec attacker_node bash`
-4. Follow the Scenario guides in the `/docs` folder!
-
-## 🎓 Academic Context
-Designed for students and researchers to master the technical depth of **Offensive Security** within an ethical framework (M.Sc. Cyber Security).
+## 🚀 Quick Start for Instructors
+1. `cd lab_infra && docker-compose up -d`
+2. Follow the **[Seminar Guide](docs/SEMINAR_THREAT_MANAGEMENT.md)**!
